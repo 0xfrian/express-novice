@@ -3,9 +3,10 @@
     "target": "esnext",
     "module": "esnext",
     "rootDir": "./",
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
-      "@utils/*": ["utils/*"]
+      "@modules/*": ["node_modules/*"],
+      "@utils/*": ["src/utils/*"]
     },
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

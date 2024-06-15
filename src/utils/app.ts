@@ -1,3 +1,4 @@
+import ansis from "@modules/ansis/index";
 import express from "express";
 import { Server, createServer } from "http";
 import { AddressInfo } from "net";
@@ -15,7 +16,7 @@ export function startApp() {
   const PORT = 0;
   server.listen(PORT, () => {
     const { port } = server.address() as AddressInfo;
-    const url = `http://localhost:${port}`;
+    const url = ansis.blue(`http://localhost:${port}`);
     console.log(`\n🟢 Express app started: ${url}\n`);
   });
 

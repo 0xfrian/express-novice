@@ -1,6 +1,14 @@
-# express-novice
+# express novice
+
+### Project Setup
+Initialize `pnpm` and TypeScript environment
+```bash
+pnpm init -y
+tsc --init
+```
+
+
 
 ### References
-- [Umi - Uploading Assets](https://developers.metaplex.com/umi/storage)
-
+- [Mocha Configuration](https://mochajs.org/#configuring-mocha-nodejs)
 

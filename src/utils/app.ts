@@ -7,6 +7,7 @@ import helloWorld from "src/routes";
 import { Request } from "express";
 import { Response } from "express";
 import { NextFunction } from "express";
+import uploadJson from "src/routes/upload-json";
 
 
 interface ConstructorProps {
@@ -34,9 +35,13 @@ export class ExpressApp {
       });
     }
 
+    // Implement middleware for parsing JSON data
+    app.use(express.json());
+
     // Assign endpoint handlers
     app.get(Router.index, helloWorld)
     app.get(Router.checkhealth, checkHealth);
+    app.post(Router.uploadJson, uploadJson);
 
     // Start server
     const server = createServer(app);
@@ -61,7 +66,7 @@ export class ExpressApp {
   }
 
   public close() {
-    this.server.close(() => process.exit(0));
+    this.server.close();
   }
 
   private gracefulShutdown(server: Server) {

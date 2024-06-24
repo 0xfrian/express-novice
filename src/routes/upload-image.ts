@@ -10,16 +10,18 @@ export interface FilesParsed {
 
 export default function uploadImage(req: Request, res: Response) {
 
-  const { files } = req;
+  const files = req.files as Express.Multer.File[];
 
-  const filesParsed: FilesParsed[] = (files as Express.Multer.File[]).map(file => ({
-    name: file.originalname,
-    size: formatBytes(file.size),
-    fileType: file.mimetype,
-  }));
+  if (files?.length > 0) {
+    const filesParsed: FilesParsed[] = files.map(file => ({
+      name: file.originalname,
+      size: formatBytes(file.size),
+      fileType: file.mimetype,
+    }));
 
-  res
-    .status(200)
-    .send(filesParsed);
+    res
+      .status(200)
+      .send(filesParsed);
+  } else res.status(400).send();
 }
 

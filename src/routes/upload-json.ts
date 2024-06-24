@@ -5,8 +5,10 @@ export default function uploadJson(req: Request, res: Response) {
 
   const { body } = req;
 
-  res
-    .status(200)
-    .send(body);
+  if (Object.keys(body).length > 0) {
+    res
+      .status(200)
+      .send(body);
+  } else res.status(400).send();
 }
 

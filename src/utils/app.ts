@@ -8,6 +8,8 @@ import { Request } from "express";
 import { Response } from "express";
 import { NextFunction } from "express";
 import uploadJson from "src/routes/upload-json";
+import multer from "multer";
+import uploadImage from "src/routes/upload-image";
 
 
 interface ConstructorProps {
@@ -26,6 +28,8 @@ export class ExpressApp {
     // Initialize Express app
     const app = express();
 
+    const upload = multer();
+
     // Implement middleware for logging
     if (!isSilent) {
       app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -42,6 +46,7 @@ export class ExpressApp {
     app.get(Router.index, helloWorld)
     app.get(Router.checkhealth, checkHealth);
     app.post(Router.uploadJson, uploadJson);
+    app.post(Router.uploadImage, upload.array("images"), uploadImage);
 
     // Start server
     const server = createServer(app);

@@ -10,6 +10,7 @@ import { NextFunction } from "express";
 import uploadJson from "src/routes/upload-json";
 import multer from "multer";
 import uploadImage from "src/routes/upload-image";
+import uploadData from "src/routes/upload-data";
 
 
 interface ConstructorProps {
@@ -47,6 +48,7 @@ export class ExpressApp {
     app.get(Router.checkhealth, checkHealth);
     app.post(Router.uploadJson, uploadJson);
     app.post(Router.uploadImage, upload.array("images"), uploadImage);
+    app.post(Router.uploadData, upload.array("data"), uploadData);
 
     // Start server
     const server = createServer(app);

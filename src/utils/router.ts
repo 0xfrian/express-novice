@@ -3,4 +3,5 @@ export const Router = {
   checkhealth: "/checkhealth",
   uploadJson: "/upload-json",
   uploadImage: "/upload-image",
+  uploadData: "/upload-data",
 }

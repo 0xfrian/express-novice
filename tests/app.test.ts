@@ -5,6 +5,7 @@ import { assert } from "chai";
 import fs from "fs";
 import { FilesParsed } from "src/routes/upload-image";
 import { Request } from "supertest";
+import { UploadDataResponse } from "src/routes/upload-data";
 
 describe("App", () => {
   describe(Router.checkhealth, () => {
@@ -98,6 +99,60 @@ describe("App", () => {
 
       assert.equal(status, 200);
       assert.equal(images.length, files.length);
+    });
+  });
+
+  describe(Router.uploadData, () => {
+    it("Empty body returns 400 BAD REQUEST", async () => {
+      const app = new ExpressApp({ isSilent: true });
+
+      const req: Request = supertest(app.url()).post(Router.uploadData) as any;
+      const res = await req;
+
+      app.close();
+
+      const { status } = res;
+      assert.equal(status, 400);
+    });
+
+    it("Uploading JSON + single image returns 200 OK", async () => {
+      const app = new ExpressApp({ isSilent: true });
+
+      const imagePath = "public/dungeon.png"
+      const dataReq = { name: "frian" };
+
+      const req: Request = supertest(app.url()).post(Router.uploadData) as any;
+      const res = await req
+        .attach("data", imagePath)
+        .field("json", JSON.stringify(dataReq));
+
+      app.close();
+
+      const { status } = res;
+      const body = res.body as UploadDataResponse;
+      assert.equal(status, 200);
+      assert.deepEqual(body.json, dataReq);
+      assert.equal(body.files.length, 1);
+    });
+
+    it("Uploading JSON + multiple image returns 200 OK", async () => {
+      const app = new ExpressApp({ isSilent: true });
+
+      const files = fs.readdirSync("public")
+        .map(file => "public/".concat(file));
+      const dataReq = { name: "frian" };
+
+      const req: Request = supertest(app.url()).post(Router.uploadData) as any;
+      files.forEach(file => req.attach("data", file));
+      const res = await req.field("json", JSON.stringify(dataReq));
+
+      app.close();
+
+      const { status } = res;
+      const body = res.body as UploadDataResponse;
+      assert.equal(status, 200);
+      assert.deepEqual(body.json, dataReq);
+      assert.equal(body.files.length, 3);
     });
   });
 });

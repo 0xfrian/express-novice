@@ -1,3 +1,5 @@
+// Format a given number of bytes into a string with the 
+// appropriate unit (KB, MB, or GB)
 export function formatBytes(bytes: number) {
   // Conversion Factors
   const KILO = 1024 ** 1;
@@ -19,3 +21,6 @@ export function formatBytes(bytes: number) {
 
   return `${values.toFixed(2)} ${unit}`;
 }
+
+// Check if a given object is empty (no fields nor methods)
+export const isEmpty = (obj: any) => Object.keys(obj).length == 0;

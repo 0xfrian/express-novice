@@ -11,11 +11,8 @@ describe("App", () => {
   describe(Router.checkhealth, () => {
     it("Returns 200 OK", async () => {
       const app = new ExpressApp({ isSilent: true });
-
-      const req: Request = supertest(app.url()).get(Router.checkhealth) as any;
+      const req: Request = supertest(app.server).get(Router.checkhealth) as any;
       const res = await req;
-
-      app.close();
 
       const { status } = res;
       assert.equal(status, 200);
@@ -25,11 +22,8 @@ describe("App", () => {
   describe(Router.uploadJson, () => {
     it("Empty body returns 400 BAD REQUEST", async () => {
       const app = new ExpressApp({ isSilent: true });
-
-      const req = supertest(app.url()).post(Router.uploadJson) as any;
+      const req = supertest(app.server).post(Router.uploadJson) as any;
       const res = await req.send();
-
-      app.close();
 
       const { status } = res;
       assert.equal(status, 400);
@@ -37,13 +31,9 @@ describe("App", () => {
 
     it("Uploading JSON returns 200 OK", async () => {
       const app = new ExpressApp({ isSilent: true });
-
       const dataReq = { name: "frian" };
-
-      const req = supertest(app.url()).post(Router.uploadJson) as any;
+      const req = supertest(app.server).post(Router.uploadJson) as any;
       const res = await req.send(dataReq);
-
-      app.close();
 
       const { status, body: dataRes } = res;
       assert.equal(status, 200);
@@ -54,11 +44,8 @@ describe("App", () => {
   describe(Router.uploadImage, () => {
     it("Empty body returns 400 BAD REQUEST", async () => {
       const app = new ExpressApp({ isSilent: true });
-
-      const req: Request = supertest(app.url()).post(Router.uploadImage) as any;
+      const req: Request = supertest(app.server).post(Router.uploadImage) as any;
       const res = await req;
-
-      app.close();
 
       const { status } = res;
       assert.equal(status, 400);
@@ -66,13 +53,9 @@ describe("App", () => {
 
     it("Uploading single image returns 200 OK", async () => {
       const app = new ExpressApp({ isSilent: true });
-
       const imagePath = "public/dungeon.png"
-
-      const req: Request = supertest(app.url()).post(Router.uploadImage) as any;
+      const req: Request = supertest(app.server).post(Router.uploadImage) as any;
       const res = await req.attach("images", imagePath);
-
-      app.close();
 
       const { status, body } = res;
       const images = body as FilesParsed[];
@@ -81,22 +64,15 @@ describe("App", () => {
     });
 
     it("Uploading multiple images returns 200 OK", async () => {
-
       const app = new ExpressApp({ isSilent: true });
-
       const files = fs.readdirSync("public")
         .map(file => "public/".concat(file));
-
-      const req: Request = supertest(app.url()).post(Router.uploadImage) as any;
+      const req: Request = supertest(app.server).post(Router.uploadImage) as any;
       files.forEach(file => req.attach("images", file));
-
       const res = await req;
-
-      app.close();
 
       const { status, body } = res;
       const images = body as FilesParsed[];
-
       assert.equal(status, 200);
       assert.equal(images.length, files.length);
     });
@@ -105,28 +81,21 @@ describe("App", () => {
   describe(Router.uploadData, () => {
     it("Empty body returns 400 BAD REQUEST", async () => {
       const app = new ExpressApp({ isSilent: true });
-
-      const req: Request = supertest(app.url()).post(Router.uploadData) as any;
+      const req: Request = supertest(app.server).post(Router.uploadData) as any;
       const res = await req;
-
-      app.close();
-
+      
       const { status } = res;
       assert.equal(status, 400);
     });
 
     it("Uploading JSON + single image returns 200 OK", async () => {
       const app = new ExpressApp({ isSilent: true });
-
       const imagePath = "public/dungeon.png"
       const dataReq = { name: "frian" };
-
-      const req: Request = supertest(app.url()).post(Router.uploadData) as any;
+      const req: Request = supertest(app.server).post(Router.uploadData) as any;
       const res = await req
         .attach("data", imagePath)
         .field("json", JSON.stringify(dataReq));
-
-      app.close();
 
       const { status } = res;
       const body = res.body as UploadDataResponse;
@@ -135,18 +104,14 @@ describe("App", () => {
       assert.equal(body.files.length, 1);
     });
 
-    it("Uploading JSON + multiple image returns 200 OK", async () => {
+    it("Uploading JSON + multiple images returns 200 OK", async () => {
       const app = new ExpressApp({ isSilent: true });
-
       const files = fs.readdirSync("public")
         .map(file => "public/".concat(file));
       const dataReq = { name: "frian" };
-
-      const req: Request = supertest(app.url()).post(Router.uploadData) as any;
+      const req: Request = supertest(app.server).post(Router.uploadData) as any;
       files.forEach(file => req.attach("data", file));
       const res = await req.field("json", JSON.stringify(dataReq));
-
-      app.close();
 
       const { status } = res;
       const body = res.body as UploadDataResponse;

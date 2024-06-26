@@ -14,21 +14,17 @@ import uploadData from "src/routes/upload-data";
 
 
 interface ConstructorProps {
-  port?: number,
   isSilent?: boolean,
 }
 
 export class ExpressApp {
   public server: Server;
-  public port: number;
 
   constructor({
-    port = 0,
     isSilent = false,
   }: ConstructorProps = {}) {
     // Initialize Express app
     const app = express();
-
     const upload = multer();
 
     // Implement middleware for logging
@@ -50,14 +46,8 @@ export class ExpressApp {
     app.post(Router.uploadImage, upload.array("images"), uploadImage);
     app.post(Router.uploadData, upload.array("data"), uploadData);
 
-    // Start server
+    // Create HTTP server instance
     const server = createServer(app);
-    server.listen(port);
-
-    // Get port number
-    let _port = (port == 0)
-      ? (server.address() as AddressInfo).port
-      : port;
 
     // Implement graceful shutdown
     process.on("SIGTERM", () => this.gracefulShutdown(server));
@@ -65,11 +55,21 @@ export class ExpressApp {
 
     // Assign class properties
     this.server = server;
-    this.port = _port;
+  }
+
+  public port() {
+    if (this.server.listening) return (this.server.address() as AddressInfo).port;
+    else throw new Error("Server is not listening for connections");
+
   }
 
   public url() {
-    return `http://localhost:${this.port}`;
+    if (this.server.listening) return `http://localhost:${this.port()}`;
+    else throw new Error("Server is not listening for connections");
+  }
+
+  public start(port: number = 0) {
+    this.server.listen(port);
   }
 
   public close() {
